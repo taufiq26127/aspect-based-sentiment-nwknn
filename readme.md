@@ -31,6 +31,8 @@ Data yang digunakan merupakan teks ulasan mentah (_raw review_) dari wisatawan m
 
 ## ⚙️ Tahapan Sistem (Pipeline)
 
+![Arsitektur Model](image/arsitektur-model.png)
+
 ### 1. Preprocessing Teks
 
 Setiap ulasan diproses melalui serangkaian tahapan pembersihan untuk menstandarisasi teks:
