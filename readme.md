@@ -2,9 +2,14 @@
 
 <!-- Badges (Pemanis Visual) -->
 <p>
-  <img src="https://img.shields.io/badge/Python-3.x-blue?style=flat-square&logo=python" alt="Python">
-  <img src="https://img.shields.io/badge/Machine%20Learning-NWKNN-orange?style=flat-square" alt="Machine Learning">
-  <img src="https://img.shields.io/badge/NLP-TF--IDF-success?style=flat-square" alt="NLP">
+  <!-- Library Data Science -->
+  <img src="https://img.shields.io/badge/Pandas-150458?style=flat-square&logo=pandas&logoColor=white" alt="Pandas">
+  <img src="https://img.shields.io/badge/scikit--learn-%23F7931E.svg?style=flat-square&logo=scikit-learn&logoColor=white" alt="Scikit-Learn">
+  <img src="https://img.shields.io/badge/Numpy-777BB4?style=flat-square&logo=numpy&logoColor=white" alt="Numpy">
+  
+  <!-- Environment (Pilih salah satu) -->
+  <img src="https://img.shields.io/badge/Jupyter-F37626.svg?style=flat-square&logo=Jupyter&logoColor=white" alt="Jupyter Notebook">
+  <img src="https://img.shields.io/badge/Colab-F9AB00?style=flat-square&logo=googlecolab&color=525252" alt="Google Colab">
 </p>
 
 > Penerapan algoritma **_Neighbor Weighted K-Nearest Neighbor_ (NWKNN)** untuk menangani ketidakseimbangan data pada Analisis Sentimen Berbasis Aspek (ABSA) terhadap ulasan objek wisata Pantai Malang Selatan.
@@ -16,7 +21,7 @@
 
 ## 📌 Deskripsi Proyek
 
-Penelitian ini bertujuan untuk menguji performa dan akurasi algoritma **NWKNN** dalam mengklasifikasikan teks ulasan. Fokus utama proyek ini adalah menangani tantangan _imbalanced dataset_ (data tidak seimbang) menggunakan metode evaluasi pembobotan jarak, dengan membandingkannya terhadap teknik _Synthetic Minority Over-sampling Technique_ (**SMOTE**).
+Penelitian ini bertujuan untuk menguji performa dan akurasi algoritma **NWKNN** dalam mengklasifikasikan teks ulasan. Fokus utama proyek ini adalah menangani tantangan _imbalanced dataset_ (data tidak seimbang) dengan menggunakan **Neighbor Weighted K-Nearest Neighbor**. Lalu membandingkannya terhadap teknik _Synthetic Minority Over-sampling Technique_ (**SMOTE**) dan beberapa macam pengujian untuk melihat pengaruh seleksi fitur hingga penerapan perbaikan kata menggunakan Metode **Spelling Corector Peter Norvig**.
 
 ---
 
@@ -24,12 +29,14 @@ Penelitian ini bertujuan untuk menguji performa dan akurasi algoritma **NWKNN** 
 
 Data yang digunakan merupakan teks ulasan mentah (_raw review_) dari wisatawan mengenai destinasi Pantai Malang Selatan.
 
+![Arsitektur Model](image/dataset.png)
+
 - **Total Data:** 1.020 ulasan wisatawan.
 - **Karakteristik Label:** Multi-label (ditransformasikan menjadi _single-label_ menggunakan pendekatan _Binary Relevance_ sebelum proses pelatihan model).
 
 ---
 
-## ⚙️ Tahapan Sistem (Pipeline)
+## ⚙️ Arsitektur Model
 
 ![Arsitektur Model](image/arsitektur-model.png)
 
@@ -62,14 +69,11 @@ Setiap ulasan diproses melalui serangkaian tahapan pembersihan untuk menstandari
 
 Model diuji menggunakan berbagai skenario kombinasi (dengan/tanpa normalisasi, penggunaan _Information Gain_, variasi penyeimbangan data, serta penyesuaian parameter `k` dan `e`).
 
-| Skenario Pengujian                       | Parameter Optimal | Tingkat Akurasi |
-| :--------------------------------------- | :---------------- | :-------------- |
-| **NWKNN** (Tanpa Normalisasi & Tanpa IG) | `e = 2`, `k = 20` | **81,08%** 🏆   |
-| **NWKNN** + Peter Norvig Bigram + IG     | `e = 2`, `k = 15` | **81,08%** 🏆   |
-| **NWKNN** + Peter Norvig Unigram + IG    | `e = 2`, `k = 15` | **81,08%** 🏆   |
-| **NWKNN** + Peter Norvig Bigram          | `e = 2`, `k = 15` | 80,98%          |
-| **NWKNN** + Peter Norvig Unigram         | `e = 2`, `k = 15` | 80,88%          |
-| **NWKNN** + SMOTE                        | `e = 1`, `k = 2`  | 36,86% ⚠️       |
+![Pengujian](image/image.png) ![Pengujian1](image/image1.png)
+![Pengujian2](image/image2.png) ![Pengujian3](image/image3.png)
+![Pengujian4](image/image4.png) ![Pengujian5](image/image5.png)
+
+![Hasil Pengujian](image/hasil-pengujian.png)
 
 ---
 
@@ -78,6 +82,8 @@ Model diuji menggunakan berbagai skenario kombinasi (dengan/tanpa normalisasi, p
 Berdasarkan tabel di atas, terlihat adanya anomali di mana penggunaan **SMOTE** justru menyebabkan penurunan tingkat akurasi secara drastis (menjadi 36,86%).
 
 Penurunan ini disebabkan oleh karakteristik sampel sintetis (data buatan) dari kelas minoritas yang digenerasi oleh SMOTE. Sampel sintetis tersebut tercipta terlalu berdekatan—atau bahkan saling tumpang tindih—dengan batas sampel dari kelas mayoritas. Kondisi ini menciptakan **_noise_ (gangguan)** baru pada data. Selain itu, distribusi sampel buatan ini meningkatkan kompleksitas data latih yang berisiko memicu **_overfitting_**, sehingga kemampuan model dalam menggeneralisasi data uji (data yang belum pernah dilihat sebelumnya) menjadi sangat lemah.
+
+Pengunaan SMOTE menyebabkan penurunan akurasi oleh sampel sintetis dari kelas minoritas yang dihasilkan terlalu dekat. Namun, penggunaan SMOTE membantu menyeimbangkan distribusi kelas, sehingga prediksi model menjadi lebih merata dan tidak hanya cenderung ke kelas mayoritas. Sebaliknya NWKNN, cenderung memprediksi kelas mayoritas akibat ketidakseimbangan jumlah data pada kelas tersebut. Semakin kecil nilai E, maka bobot yang dihasilkan juga semakin rendah. Hal ini berdampak pada penurunan skor klasifikasi, karena nilai bobot yang kecil mengurangi kontribusi tetangga terdekat dalam proses pengklasifikasian.
 
 ---
 
